@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Sudoku/bin/Debug/netcoreapp2.2
+/.vs/Sudoku/v16/Server/sqlite3
+/Sudoku/obj
