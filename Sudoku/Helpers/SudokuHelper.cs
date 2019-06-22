@@ -459,7 +459,6 @@ namespace Sudoku
             return
                 ValueIsLegalInRowAndCol(sudokuToSolve, row, col, valueToTest) &&
                 ValueIsLegalInRegion(sudokuToSolve, row, col, valueToTest);
-            //&& ValueIsLegalBasedOnCount(sudokuToSolve, valueToTest);
         }
 
         private static bool ValueIsLegalInRegion(SudokuWithLegalValues sudokuToSolve, int row, int col, byte valueToTest)
