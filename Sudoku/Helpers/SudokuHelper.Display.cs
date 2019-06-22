@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Sudoku.Entities;
+using Sudoku.Enums;
+using System;
 using System.Text;
 
-namespace Sudoku
+namespace Sudoku.Helpers
 {
     public static partial class SudokuHelper
     {
@@ -89,6 +91,41 @@ namespace Sudoku
                     return;
                 }
             }
+        }
+
+        public static string GenerateDisplayStringCompact(SudokuWithLegalValues sudoku)
+        {
+            StringBuilder sudokuText = new StringBuilder();
+            int nrDigits = sudoku.Size.ToString().Length + 1;
+
+            for (int rowIndex = 0; rowIndex < sudoku.Size; rowIndex++)
+            {
+                for (int colIndex = 0; colIndex < sudoku.Size; colIndex++)
+                {
+                    if (sudoku.Grid[rowIndex][colIndex].Count > 0)
+                    {
+                        sudokuText.Append(sudoku.Grid[rowIndex][colIndex][0].ToString().PadLeft(nrDigits));
+                    }
+                    else
+                    {
+                        sudokuText.Append(" ".PadLeft(nrDigits));
+                    }
+
+                    if ((colIndex + 1) % sudoku.RegionSize == 0)
+                    {
+                        sudokuText.Append(" ");
+                    }
+                }
+
+                sudokuText.AppendLine();
+
+                if ((rowIndex + 1) % sudoku.RegionSize == 0)
+                {
+                    sudokuText.AppendLine();
+                }
+            }
+
+            return sudokuText.ToString();
         }
 
         public static void LogSudoku(SudokuWithLegalValues sudoku, bool forceLog = false)
@@ -209,41 +246,6 @@ namespace Sudoku
                     {
                         sudokuText.AppendLine(IntermedBorder);
                     }
-                }
-            }
-
-            return sudokuText.ToString();
-        }
-
-        public static string GenerateDisplayStringCompact(SudokuWithLegalValues sudoku)
-        {
-            StringBuilder sudokuText = new StringBuilder();
-            int nrDigits = sudoku.Size.ToString().Length + 1;
-
-            for (int rowIndex = 0; rowIndex < sudoku.Size; rowIndex++)
-            {
-                for (int colIndex = 0; colIndex < sudoku.Size; colIndex++)
-                {
-                    if (sudoku.Grid[rowIndex][colIndex].Count > 0)
-                    {
-                        sudokuText.Append(sudoku.Grid[rowIndex][colIndex][0].ToString().PadLeft(nrDigits));
-                    }
-                    else
-                    {
-                        sudokuText.Append(" ".PadLeft(nrDigits));
-                    }
-
-                    if ((colIndex + 1) % sudoku.RegionSize == 0)
-                    {
-                        sudokuText.Append(" ");
-                    }
-                }
-
-                sudokuText.AppendLine();
-
-                if ((rowIndex + 1) % sudoku.RegionSize == 0)
-                {
-                    sudokuText.AppendLine();
                 }
             }
 

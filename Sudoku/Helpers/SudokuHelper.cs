@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Sudoku.Entities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Sudoku
+namespace Sudoku.Helpers
 {
     public static partial class SudokuHelper
     {

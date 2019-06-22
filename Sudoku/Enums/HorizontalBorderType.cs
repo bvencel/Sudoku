@@ -1,4 +1,4 @@
-﻿namespace Sudoku
+﻿namespace Sudoku.Enums
 {
     public enum HorizontalBorderType
     {

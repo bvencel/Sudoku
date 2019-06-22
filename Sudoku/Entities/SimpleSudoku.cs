@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using SudokuGrid = System.Collections.Generic.List<System.Collections.Generic.List<System.Collections.Generic.List<byte>>>;
 
-namespace Sudoku
+namespace Sudoku.Entities
 {
-    public struct Sudoku
+    public struct SimpleSudoku
     {
-        public Sudoku(byte[,] sudokuGrid)
+        public SimpleSudoku(byte[,] sudokuGrid)
         {
             Grid = sudokuGrid;
             Size = Grid.GetLength(0);

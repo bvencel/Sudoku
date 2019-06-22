@@ -1,10 +1,93 @@
-﻿using System.Collections.Generic;
+﻿using Sudoku.Entities;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Sudoku
+namespace Sudoku.Helpers
 {
     public static partial class SudokuHelper
     {
+        private static bool EliminateNakedPairsAfterPosition(ref SudokuWithLegalValues sudoku, int row, int col, out int reducedCounter)
+        {
+            reducedCounter = 0;
+
+            // Only go 'till the row before last
+            for (int rowIndex = row; rowIndex < sudoku.Size; rowIndex++)
+            {
+                // Only go 'till the col before last
+                for (int colIndex = 0; colIndex < sudoku.Size; colIndex++)
+                {
+                    if (rowIndex == row && colIndex <= col)
+                    {
+                        continue;
+                    }
+
+                    List<byte> cellValues = sudoku.Grid[rowIndex][colIndex];
+
+                    if (cellValues.Count == 2)
+                    {
+                        if (colIndex < sudoku.Size - 1)
+                        {
+                            // Look for similar in row
+                            for (int i = colIndex + 1; i < sudoku.Size; i++)
+                            {
+                                // Iterating through row, horizontally
+                                if (sudoku.Grid[rowIndex][i].Count == 2 && cellValues.Contains(sudoku.Grid[rowIndex][i][0]) && cellValues.Contains(sudoku.Grid[rowIndex][i][1]))
+                                {
+                                    Log($"[{rowIndex + 1}][{colIndex + 1}]→[{rowIndex + 1}][{i + 1}] is naked pair: {string.Join(", ", cellValues.Select(b => b.ToString()))}");
+
+                                    if (!EliminateNakedPairsOnRow(ref sudoku, rowIndex, colIndex, i, cellValues[0], cellValues[1], out int intermedCounter))
+                                    {
+                                        LogError($"Naked pair cleanup on row {rowIndex} had problems");
+                                        return false;
+                                    }
+                                    reducedCounter += intermedCounter;
+
+                                    // Eliminate in sector, if needed
+                                    if (!EliminateNakedPairsInRegionBasedOnRowMatch(ref sudoku, rowIndex, colIndex, i, cellValues[0], cellValues[1], out intermedCounter))
+                                    {
+                                        LogError($"Naked pair cleanup on region/row {rowIndex} had problems");
+                                        return false;
+                                    }
+
+                                    reducedCounter += intermedCounter;
+                                }
+                            }
+                        }
+
+                        if (rowIndex < sudoku.Size - 1)
+                        {
+                            for (int i = rowIndex + 1; i < sudoku.Size; i++)
+                            {
+                                if (sudoku.Grid[i][colIndex].Count == 2 && cellValues.Contains(sudoku.Grid[i][colIndex][0]) && cellValues.Contains(sudoku.Grid[i][colIndex][1]))
+                                {
+                                    Log($"[{rowIndex + 1}][{colIndex + 1}]→[{i + 1}][{colIndex + 1}] is naked pair: {string.Join(", ", cellValues.Select(b => b.ToString()))}");
+
+                                    if (!EliminateNakedPairsOnCol(ref sudoku, rowIndex, i, colIndex, cellValues[0], cellValues[1], out int intermedCounter))
+                                    {
+                                        LogError($"Naked pair cleanup on col {colIndex} had problems");
+                                        return false;
+                                    }
+
+                                    reducedCounter += intermedCounter;
+
+                                    // Eliminate in sector, if needed
+                                    if (!EliminateNakedPairsInRegionBasedOnColMatch(ref sudoku, rowIndex, i, colIndex, cellValues[0], cellValues[1], out intermedCounter))
+                                    {
+                                        LogError($"Naked pair cleanup on region/col {rowIndex} had problems");
+                                        return false;
+                                    }
+
+                                    reducedCounter += intermedCounter;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
         private static bool EliminateNakedPairsInRegionBasedOnColMatch(ref SudokuWithLegalValues sudoku, int row1, int row2, int col, byte value1, byte value2, out int nrRemovedElements)
         {
             nrRemovedElements = 0;
@@ -209,87 +292,6 @@ namespace Sudoku
             return true;
         }
 
-        private static bool EliminateNakedPairsAfterPosition(ref SudokuWithLegalValues sudoku, int row, int col, out int reducedCounter)
-        {
-            reducedCounter = 0;
-
-            // Only go 'till the row before last
-            for (int rowIndex = row; rowIndex < sudoku.Size; rowIndex++)
-            {
-                // Only go 'till the col before last
-                for (int colIndex = 0; colIndex < sudoku.Size; colIndex++)
-                {
-                    if (rowIndex == row && colIndex <= col)
-                    {
-                        continue;
-                    }
-
-                    List<byte> cellValues = sudoku.Grid[rowIndex][colIndex];
-
-                    if (cellValues.Count == 2)
-                    {
-                        if (colIndex < sudoku.Size - 1)
-                        {
-                            // Look for similar in row
-                            for (int i = colIndex + 1; i < sudoku.Size; i++)
-                            {
-                                // Iterating through row, horizontally
-                                if (sudoku.Grid[rowIndex][i].Count == 2 && cellValues.Contains(sudoku.Grid[rowIndex][i][0]) && cellValues.Contains(sudoku.Grid[rowIndex][i][1]))
-                                {
-                                    Log($"[{rowIndex + 1}][{colIndex + 1}]→[{rowIndex + 1}][{i + 1}] is naked pair: {string.Join(", ", cellValues.Select(b => b.ToString()))}");
-
-                                    if (!EliminateNakedPairsOnRow(ref sudoku, rowIndex, colIndex, i, cellValues[0], cellValues[1], out int intermedCounter))
-                                    {
-                                        LogError($"Naked pair cleanup on row {rowIndex} had problems");
-                                        return false;
-                                    }
-                                    reducedCounter += intermedCounter;
-
-                                    // Eliminate in sector, if needed
-                                    if (!EliminateNakedPairsInRegionBasedOnRowMatch(ref sudoku, rowIndex, colIndex, i, cellValues[0], cellValues[1], out intermedCounter))
-                                    {
-                                        LogError($"Naked pair cleanup on region/row {rowIndex} had problems");
-                                        return false;
-                                    }
-
-                                    reducedCounter += intermedCounter;
-                                }
-                            }
-                        }
-
-                        if (rowIndex < sudoku.Size - 1)
-                        {
-                            for (int i = rowIndex + 1; i < sudoku.Size; i++)
-                            {
-                                if (sudoku.Grid[i][colIndex].Count == 2 && cellValues.Contains(sudoku.Grid[i][colIndex][0]) && cellValues.Contains(sudoku.Grid[i][colIndex][1]))
-                                {
-                                    Log($"[{rowIndex + 1}][{colIndex + 1}]→[{i + 1}][{colIndex + 1}] is naked pair: {string.Join(", ", cellValues.Select(b => b.ToString()))}");
-
-                                    if (!EliminateNakedPairsOnCol(ref sudoku, rowIndex, i, colIndex, cellValues[0], cellValues[1], out int intermedCounter))
-                                    {
-                                        LogError($"Naked pair cleanup on col {colIndex} had problems");
-                                        return false;
-                                    }
-
-                                    reducedCounter += intermedCounter;
-
-                                    // Eliminate in sector, if needed
-                                    if (!EliminateNakedPairsInRegionBasedOnColMatch(ref sudoku, rowIndex, i, colIndex, cellValues[0], cellValues[1], out intermedCounter))
-                                    {
-                                        LogError($"Naked pair cleanup on region/col {rowIndex} had problems");
-                                        return false;
-                                    }
-
-                                    reducedCounter += intermedCounter;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return true;
-        }
         /// <summary>
         /// Should be run after any other reducing.
         /// </summary>

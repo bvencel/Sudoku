@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using SudokuGrid = System.Collections.Generic.List<System.Collections.Generic.List<System.Collections.Generic.List<byte>>>;
 
-namespace Sudoku
+namespace Sudoku.Entities
 {
     public class SudokuWithLegalValues
     {

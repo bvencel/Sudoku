@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Sudoku.Entities;
+using Sudoku.Helpers;
+using System;
 using System.Collections.Generic;
 
 namespace Sudoku
 {
     internal class Program
     {
-        private static readonly SudokuWithLegalValues originalSudoku = new Sudoku(new byte[,] {
+        private static readonly SudokuWithLegalValues originalSudoku = new SimpleSudoku(new byte[,] {
                 {5, 3, 0,  0, 7, 0,  0, 0, 0},
                 {6, 0, 0,  1, 9, 5,  0, 0, 0},
                 {0, 9, 8,  0, 0, 0,  0, 6, 0},
@@ -18,7 +20,7 @@ namespace Sudoku
                 {0, 0, 0,  4, 1, 9,  0, 0, 5},
                 {0, 0, 0,  0, 8, 0,  0, 7, 9}}).ToSudokuWithLegalValues();
 
-        private static readonly SudokuWithLegalValues originalSudoku16 = new Sudoku(new byte[,] {
+        private static readonly SudokuWithLegalValues originalSudoku16 = new SimpleSudoku(new byte[,] {
             { 0, 0, 3, 0,   5, 0,13, 0,  16, 0,14, 0,   0, 0,15, 0},
             { 0,10,15, 0,   0, 0, 0, 0,   0, 0, 0, 6,   0, 0, 0,11},
             { 6, 0, 0, 8,   0,10,15, 0,   0, 9, 0, 0,   4, 2, 0, 5},
@@ -39,7 +41,7 @@ namespace Sudoku
             { 8, 0, 0, 0,  14, 0, 0, 0,  13, 0, 0, 0,   0, 3, 1, 0},
             { 0,12, 0, 0,   0, 2, 0,16,   0, 5, 0,10,   0,15, 4, 0}}).ToSudokuWithLegalValues();
 
-        private static readonly SudokuWithLegalValues originalSudoku16Empty = new Sudoku(new byte[,] {
+        private static readonly SudokuWithLegalValues originalSudoku16Empty = new SimpleSudoku(new byte[,] {
             {5, 3, 0, 0,  0, 0, 0, 0,  7, 0, 0, 0,  0, 0, 0, 0},
             {6, 0, 0, 1,  5, 0, 0, 0,  9, 0, 0, 0,  0, 0, 0, 0},
             {0, 9, 8, 0,  0, 0, 0, 0,  0, 0, 0, 0,  6, 0, 0, 0},
@@ -60,7 +62,7 @@ namespace Sudoku
             {0, 0, 0, 4,  9, 0, 0, 0,  1, 0, 0, 0,  0, 5, 0, 0},
             {0, 0, 0, 0,  0, 0, 0, 0,  8, 0, 0, 0,  7, 9, 0, 0}}).ToSudokuWithLegalValues();
 
-        private static readonly SudokuWithLegalValues originalSudoku16Empty2 = new Sudoku(new byte[,] {
+        private static readonly SudokuWithLegalValues originalSudoku16Empty2 = new SimpleSudoku(new byte[,] {
             {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0},
             {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0},
             {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0},
@@ -81,7 +83,7 @@ namespace Sudoku
             {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0},
             {0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0}}).ToSudokuWithLegalValues();
 
-        private static readonly SudokuWithLegalValues originalSudoku16Solved = new Sudoku(new byte[,] {
+        private static readonly SudokuWithLegalValues originalSudoku16Solved = new SimpleSudoku(new byte[,] {
                 { 4, 2, 3, 7,   5, 6,13, 9,  16,11,14, 1,  10, 8,15,12},
                 {16,10,15,14,   2, 3,12, 8,   4,13, 5, 6,   7, 1, 9,11},
                 { 6, 1,11, 8,  16,10,15,14,   3, 9, 7,12,   4, 2,13, 5},
@@ -102,7 +104,7 @@ namespace Sudoku
                 { 8,11, 2,10,  14,15, 4,13,  12, 7,16, 9,   5, 3, 1, 6},
                 { 1,12,14, 3,  11, 2, 8,16,  13, 5, 6,10,   9,15, 4, 7}}).ToSudokuWithLegalValues();
 
-        private static readonly SudokuWithLegalValues originalSudokuEmpty = new Sudoku(new byte[,] {
+        private static readonly SudokuWithLegalValues originalSudokuEmpty = new SimpleSudoku(new byte[,] {
                 {0, 0, 0,  0, 0, 0,  0, 0, 0},
                 {0, 0, 0,  0, 0, 0,  0, 0, 0},
                 {0, 0, 0,  0, 0, 0,  0, 0, 0},
@@ -115,7 +117,7 @@ namespace Sudoku
                 {0, 0, 0,  0, 0, 0,  0, 0, 0},
                 {0, 0, 0,  0, 0, 0,  0, 0, 0}}).ToSudokuWithLegalValues();
 
-        private static readonly SudokuWithLegalValues originalSudokuSolved = new Sudoku(new byte[,] {
+        private static readonly SudokuWithLegalValues originalSudokuSolved = new SimpleSudoku(new byte[,] {
                 {5, 3, 4,  6, 7, 8,  9, 1, 2},
                 {6, 7, 2,  1, 9, 5,  3, 4, 8},
                 {1, 9, 8,  3, 4, 2,  5, 6, 7},

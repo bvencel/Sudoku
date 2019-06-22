@@ -1,4 +1,4 @@
-﻿namespace Sudoku
+﻿namespace Sudoku.Entities
 {
     public struct Region
     {
